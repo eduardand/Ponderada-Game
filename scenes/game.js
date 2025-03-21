@@ -121,11 +121,12 @@ this.scale.on('orientationchange', function(orientation) {
             // Ajustes específicos para o modo retrato
             this.scale.resize(this.larguraJogo, this.alturaJogo);
             
-            // Reposiciona elementos da interface para o modo retrato
-            this.reposicionarElementosRetrato();
-            
-            // Ajusta o tamanho e escala dos elementos de jogo
-            this.ajustarTamanhoElementosRetrato();
+            // Adiciona escalabilidade responsiva para o modo retrato
+            if (this.jogador) {
+                // Em retrato, a escala pode precisar ser menor para caber na largura
+                const escalaRetrato = Math.min(1, this.larguraJogo / 600);
+                this.jogador.setScale(escalaRetrato);
+            }
             break;
 
         default:  // Phaser.Scale.LANDSCAPE ou Phaser.Scale.LANDSCAPE_SECONDARY
@@ -133,88 +134,15 @@ this.scale.on('orientationchange', function(orientation) {
             // Ajustes específicos para o modo paisagem
             this.scale.resize(this.larguraJogo, this.alturaJogo);
             
-            // Reposiciona elementos da interface para o modo paisagem
-            this.reposicionarElementosPaisagem();
-            
-            // Ajusta o tamanho e escala dos elementos de jogo
-            this.ajustarTamanhoElementosPaisagem();
+            // Adiciona escalabilidade responsiva para o modo paisagem
+            if (this.jogador) {
+                // Em paisagem, podemos usar uma escala maior
+                const escalaPaisagem = Math.min(1.2, this.alturaJogo / 500);
+                this.jogador.setScale(escalaPaisagem);
+            }
             break;
     }
-    
-    // Atualiza o posicionamento da câmera
-    if (this.cameras && this.cameras.main) {
-        this.cameras.main.setSize(this.larguraJogo, this.alturaJogo);
-    }
-    
 }, this);
-
-// Função para reposicionar elementos na orientação retrato
-function reposicionarElementosRetrato() {
-    // Exemplo: Posicionar botões no fundo da tela em coluna
-    if (this.botoes) {
-        const espacamento = 20;
-        const posY = this.alturaJogo - 100;
-        
-        this.botoes.forEach((botao, index) => {
-            botao.setPosition(this.larguraJogo / 2, posY - (index * espacamento));
-        });
-    }
-    
-    // Posiciona placar ou HUD no topo
-    if (this.placar) {
-        this.placar.setPosition(this.larguraJogo / 2, 50);
-    }
-}
-
-// Função para reposicionar elementos na orientação paisagem
-function reposicionarElementosPaisagem() {
-    // Exemplo: Posicionar botões no lado direito em linha
-    if (this.botoes) {
-        const espacamento = 20;
-        const posX = this.larguraJogo - 100;
-        
-        this.botoes.forEach((botao, index) => {
-            botao.setPosition(posX - (index * espacamento), this.alturaJogo / 2);
-        });
-    }
-    
-    // Posiciona placar ou HUD no canto superior esquerdo
-    if (this.placar) {
-        this.placar.setPosition(100, 50);
-    }
-}
-
-// Função para ajustar o tamanho dos elementos no modo retrato
-function ajustarTamanhoElementosRetrato() {
-    // Exemplo: Ajustar escala do jogador para tela mais estreita
-    if (this.jogador) {
-        // Em retrato, a escala pode precisar ser menor para caber na largura
-        const escalaRetrato = Math.min(1, this.larguraJogo / 600);
-        this.jogador.setScale(escalaRetrato);
-    }
-    
-    // Ajusta o tamanho da área de jogo principal
-    if (this.areaJogo) {
-        this.areaJogo.setDisplaySize(this.larguraJogo * 0.9, this.alturaJogo * 0.7);
-        this.areaJogo.setPosition(this.larguraJogo / 2, this.alturaJogo * 0.4);
-    }
-}
-
-// Função para ajustar o tamanho dos elementos no modo paisagem
-function ajustarTamanhoElementosPaisagem() {
-    // Exemplo: Ajustar escala do jogador para tela mais larga
-    if (this.jogador) {
-        // Em paisagem, podemos usar uma escala maior
-        const escalaPaisagem = Math.min(1.2, this.alturaJogo / 500);
-        this.jogador.setScale(escalaPaisagem);
-    }
-    
-    // Ajusta o tamanho da área de jogo principal
-    if (this.areaJogo) {
-        this.areaJogo.setDisplaySize(this.larguraJogo * 0.7, this.alturaJogo * 0.9);
-        this.areaJogo.setPosition(this.larguraJogo * 0.4, this.alturaJogo / 2);
-    }
-}
 }
 
 update() {
